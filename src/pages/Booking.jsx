@@ -1,3 +1,16 @@
+import { useState } from "react";
+import WagonSelector from "../components/WagonSelector";
+import SeatMap from "../components/SeatMap";
+import BookingForm from "../components/BookingForm";
+
 export default function Booking() {
-  return <h1>Бронювання</h1>;
+  const [wagon, setWagon] = useState(null);
+
+  return (
+    <div>
+      <WagonSelector setWagon={setWagon} />
+      {wagon && <SeatMap />}
+      {wagon && <BookingForm />}
+    </div>
+  );
 }
