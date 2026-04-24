@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { trainsApi, bookingsApi } from '../services/api';
+import { trainsApi, bookingsApi } from '../services/BookingService';
 
 const BookingContext = createContext();
 

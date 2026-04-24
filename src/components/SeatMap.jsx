@@ -1,32 +1,62 @@
 import { useBooking } from "../context/BookingContext";
 
 export default function SeatMap() {
-  const { selectedSeats, setSelectedSeats } = useBooking();
+  const { selectedWagon, selectedSeats, bookedSeats, toggleSeat } = useBooking();
 
-  const toggleSeat = (seat) => {
-    if (selectedSeats.includes(seat)) {
-      setSelectedSeats(selectedSeats.filter((s) => s !== seat));
-    } else {
-      setSelectedSeats([...selectedSeats, seat]);
-    }
+  if (!selectedWagon) return null;
+
+  const totalSeats = selectedWagon.seats;
+
+  const getSeatStatus = (seatNumber) => {
+    if (bookedSeats.includes(seatNumber)) return "booked";
+    if (selectedSeats.includes(seatNumber)) return "selected";
+    return "free";
   };
 
   return (
-    <div className="seats">
-      {[...Array(20)].map((_, i) => {
-        const seat = i + 1;
-        return (
-          <button
-            key={seat}
-            className={
-              selectedSeats.includes(seat) ? "selected" : "free"
-            }
-            onClick={() => toggleSeat(seat)}
-          >
-            {seat}
-          </button>
-        );
-      })}
+    <div className="seat-map">
+      <h3 className="seat-map__title">
+        Схема вагону {selectedWagon.number} ({selectedWagon.type})
+      </h3>
+      
+      <div className="seat-map__legend">
+        <div className="legend-item">
+          <div className="legend-color legend-color--free"></div>
+          <span>Вільні</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color legend-color--selected"></div>
+          <span>Обрані</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-color legend-color--booked"></div>
+          <span>Заброньовані</span>
+        </div>
+      </div>
+
+      <div className="seat-map__grid">
+        {[...Array(totalSeats)].map((_, i) => {
+          const seatNumber = i + 1;
+          const status = getSeatStatus(seatNumber);
+          
+          return (
+            <button
+              key={seatNumber}
+              className={`seat seat--${status}`}
+              onClick={() => toggleSeat(seatNumber)}
+              disabled={status === "booked"}
+            >
+              {seatNumber}
+            </button>
+          );
+        })}
+      </div>
+      
+      {selectedSeats.length > 0 && (
+        <div className="seat-map__info">
+          Обрано місць: {selectedSeats.length}
+        </div>
+      )}
     </div>
   );
 }

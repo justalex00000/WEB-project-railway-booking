@@ -7,9 +7,24 @@
       "time": "08:00",
       "duration": "5 год",
       "wagons": [
-        { "id": "1-1", "number": 1, "type": "Плацкарт", "seats": 40 },
-        { "id": "1-2", "number": 2, "type": "Купе", "seats": 36 },
-        { "id": "1-3", "number": 3, "type": "Люкс", "seats": 18 }
+        {
+          "id": "1-1",
+          "number": 1,
+          "type": "Плацкарт",
+          "seats": 40
+        },
+        {
+          "id": "1-2",
+          "number": 2,
+          "type": "Купе",
+          "seats": 36
+        },
+        {
+          "id": "1-3",
+          "number": 3,
+          "type": "Люкс",
+          "seats": 18
+        }
       ]
     },
     {
@@ -19,10 +34,51 @@
       "time": "12:00",
       "duration": "4 год",
       "wagons": [
-        { "id": "2-1", "number": 1, "type": "Плацкарт", "seats": 40 },
-        { "id": "2-2", "number": 2, "type": "Купе", "seats": 36 }
+        {
+          "id": "2-1",
+          "number": 1,
+          "type": "Плацкарт",
+          "seats": 40
+        },
+        {
+          "id": "2-2",
+          "number": 2,
+          "type": "Купе",
+          "seats": 36
+        }
       ]
     }
   ],
-  "bookings": []
+  "bookings": [
+    {
+      "id": "gSNbPlCE1wQ",
+      "trainId": "1",
+      "trainNumber": "IC101",
+      "wagonNumber": 1,
+      "seats": [
+        3,
+        4,
+        12
+      ],
+      "passengerName": "Курій",
+      "passengerEmail": "mail@ukr.net",
+      "passengerPhone": "+380 99 172 3132",
+      "bookingDate": "2026-04-24T12:53:41.498Z"
+    },
+    {
+      "id": "p6W19bqGmlU",
+      "trainId": "1",
+      "trainNumber": "IC101",
+      "wagonNumber": 1,
+      "seats": [
+        1,
+        2
+      ],
+      "passengerName": "112123",
+      "passengerEmail": "12421@mail.com",
+      "passengerPhone": "+380 99 172 3132",
+      "bookingDate": "2026-04-24T12:54:24.624Z"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

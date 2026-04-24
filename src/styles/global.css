@@ -1,21 +1,195 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
+  background: #6a52cb;
+  min-height: 100vh;
+  padding: 16px;
 }
 
-.card {
+/* контейнер */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ===== SEARCH ===== */
+.search-input {
+  width: 100%;
+  padding: 12px;
   border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.search-input:focus {
+  border-color: #6366f1;
+  outline: none;
+}
+
+/* ===== TRAIN LIST ===== */
+.train-list__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .train-list__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .train-list__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== CARD ===== */
+.train-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: 0.2s;
+}
+
+.train-card:hover {
+  transform: translateY(-3px);
+}
+
+.train-card__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+/* кнопка */
+.train-card__button {
+  width: 100%;
   padding: 10px;
-  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.seats button {
-  margin: 5px;
+.train-card__button:hover {
+  opacity: 0.9;
 }
 
-.free {
-  background: lightgreen;
+/* ===== WAGON SELECTOR ===== */
+.wagon-selector__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
-.selected {
-  background: lightblue;
+@media (min-width: 640px) {
+  .wagon-selector__list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.wagon-selector__button {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.wagon-selector__button:hover {
+  border-color: #6366f1;
+}
+
+.wagon-selector__button--active {
+  border-color: #6366f1;
+  background: #eef2ff;
+}
+
+/* ===== SEATS ===== */
+.seat-map__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .seat-map__grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+}
+
+.seat {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+  color: white;
+}
+
+/* вільне */
+.seat--free {
+  background: #22c55e;
+}
+
+/* обране */
+.seat--selected {
+  background: #3b82f6;
+}
+
+/* заброньоване */
+.seat--booked {
+  background: #ef4444;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* hover тільки для вільних */
+.seat--free:hover {
+  filter: brightness(0.9);
+}
+
+/* ===== FORM ===== */
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.form-input:focus {
+  border-color: #6366f1;
+  outline: none;
+}
+
+.booking-form__submit {
+  width: 100%;
+  padding: 12px;
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.booking-form__submit:hover {
+  opacity: 0.9;
+}
+
+/* ===== loading / empty ===== */
+.loading,
+.no-results {
+  text-align: center;
+  padding: 30px;
 }
