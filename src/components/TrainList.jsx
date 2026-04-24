@@ -12,7 +12,7 @@ export default function TrainList() {
   );
 
   return (
-    <div>
+    <>
       <input
         placeholder="Пошук..."
         onChange={(e) => setSearch(e.target.value)}
@@ -21,6 +21,6 @@ export default function TrainList() {
       {filtered.map((train) => (
         <TrainCard key={train.id} train={train} />
       ))}
-    </div>
+    </>
   );
 }
