@@ -13,6 +13,13 @@ export default function SeatMap() {
     return "free";
   };
 
+  const handleSeatClick = (seatNumber) => {
+    // Перевіряємо чи місце не заброньоване перед викликом toggleSeat
+    if (!bookedSeats.includes(seatNumber)) {
+      toggleSeat(seatNumber);
+    }
+  };
+
   return (
     <div className="seat-map">
       <h3 className="seat-map__title">
@@ -43,8 +50,9 @@ export default function SeatMap() {
             <button
               key={seatNumber}
               className={`seat seat--${status}`}
-              onClick={() => toggleSeat(seatNumber)}
+              onClick={() => handleSeatClick(seatNumber)}
               disabled={status === "booked"}
+              title={status === "booked" ? "Це місце вже заброньоване" : `Місце ${seatNumber}`}
             >
               {seatNumber}
             </button>
@@ -55,6 +63,12 @@ export default function SeatMap() {
       {selectedSeats.length > 0 && (
         <div className="seat-map__info">
           Обрано місць: {selectedSeats.length}
+        </div>
+      )}
+      
+      {bookedSeats.length > 0 && (
+        <div className="seat-map__info seat-map__info--booked">
+          Заброньовано місць: {bookedSeats.length}
         </div>
       )}
     </div>

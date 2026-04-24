@@ -29,18 +29,42 @@ export const BookingProvider = ({ children }) => {
 
   const loadBookedSeats = async (trainId, wagonNumber) => {
     try {
-      const response = await bookingsApi.getByTrain(trainId);
-      const trainBookings = response.data.filter(
+      console.log(`Loading booked seats for train ${trainId}, wagon ${wagonNumber}`);
+      
+      const response = await bookingsApi.getAll();
+      const allBookings = response.data;
+      
+      const trainBookings = allBookings.filter(
         booking => booking.trainId === trainId && booking.wagonNumber === wagonNumber
       );
+      
+      console.log('Found bookings:', trainBookings);
+      
       const booked = trainBookings.flatMap(booking => booking.seats);
-      setBookedSeats(booked);
+      
+      const localBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      const localTrainBookings = localBookings.filter(
+        booking => booking.trainId === trainId && booking.wagonNumber === wagonNumber
+      );
+      const localBookedSeats = localTrainBookings.flatMap(booking => booking.seats);
+      
+      const allBookedSeats = [...new Set([...booked, ...localBookedSeats])];
+      
+      console.log('Booked seats:', allBookedSeats);
+      setBookedSeats(allBookedSeats);
     } catch (error) {
       console.error('Error loading booked seats:', error);
+      const localBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      const localTrainBookings = localBookings.filter(
+        booking => booking.trainId === trainId && booking.wagonNumber === wagonNumber
+      );
+      const localBookedSeats = localTrainBookings.flatMap(booking => booking.seats);
+      setBookedSeats(localBookedSeats);
     }
   };
 
   const selectTrain = (train) => {
+    console.log('Selected train:', train);
     setSelectedTrain(train);
     setSelectedWagon(null);
     setSelectedSeats([]);
@@ -48,6 +72,7 @@ export const BookingProvider = ({ children }) => {
   };
 
   const selectWagon = async (wagon) => {
+    console.log('Selected wagon:', wagon);
     setSelectedWagon(wagon);
     setSelectedSeats([]);
     if (selectedTrain) {
@@ -56,13 +81,20 @@ export const BookingProvider = ({ children }) => {
   };
 
   const toggleSeat = (seatNumber) => {
-    if (bookedSeats.includes(seatNumber)) return;
+    if (bookedSeats.includes(seatNumber)) {
+      console.log(`Seat ${seatNumber} is booked, cannot select`);
+      return;
+    }
     
-    setSelectedSeats(prev => 
-      prev.includes(seatNumber)
-        ? prev.filter(s => s !== seatNumber)
-        : [...prev, seatNumber]
-    );
+    setSelectedSeats(prev => {
+      if (prev.includes(seatNumber)) {
+        console.log(`Removing seat ${seatNumber}`);
+        return prev.filter(s => s !== seatNumber);
+      } else {
+        console.log(`Adding seat ${seatNumber}`);
+        return [...prev, seatNumber];
+      }
+    });
   };
 
   const saveBooking = async (userData) => {
@@ -88,6 +120,10 @@ export const BookingProvider = ({ children }) => {
       const savedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
       savedBookings.push(booking);
       localStorage.setItem('bookings', JSON.stringify(savedBookings));
+      
+      await loadBookedSeats(selectedTrain.id, selectedWagon.number);
+      
+      setSelectedSeats([]);
       
       return booking;
     } catch (error) {
