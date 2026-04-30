@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { trainsData, getTrainById } from '../data/trains';
 
 const API_BASE_URL = 'http://localhost:3001';
 
@@ -10,8 +11,13 @@ const api = axios.create({
 });
 
 export const trainsApi = {
-  getAll: () => api.get('/trains'),
-  getById: (id) => api.get(`/trains/${id}`),
+  getAll: () => {
+    return Promise.resolve({ data: trainsData });
+  },
+  getById: (id) => {
+    const train = getTrainById(id);
+    return Promise.resolve({ data: train });
+  },
 };
 
 export const bookingsApi = {

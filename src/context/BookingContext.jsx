@@ -13,6 +13,7 @@ export const BookingProvider = ({ children }) => {
 
   useEffect(() => {
     loadTrains();
+    loadInitialBookings();
   }, []);
 
   const loadTrains = async () => {
@@ -20,6 +21,7 @@ export const BookingProvider = ({ children }) => {
     try {
       const response = await trainsApi.getAll();
       setTrains(response.data);
+      console.log('Trains loaded:', response.data);
     } catch (error) {
       console.error('Error loading trains:', error);
     } finally {
@@ -27,14 +29,22 @@ export const BookingProvider = ({ children }) => {
     }
   };
 
+  const loadInitialBookings = () => {
+    try {
+      const savedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+      console.log('Loaded bookings from localStorage:', savedBookings);
+    } catch (error) {
+      console.error('Error loading bookings from localStorage:', error);
+    }
+  };
+
   const loadBookedSeats = async (trainId, wagonNumber) => {
     try {
       console.log(`Loading booked seats for train ${trainId}, wagon ${wagonNumber}`);
       
-      const response = await bookingsApi.getAll();
-      const allBookings = response.data;
+      const localBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
       
-      const trainBookings = allBookings.filter(
+      const trainBookings = localBookings.filter(
         booking => booking.trainId === trainId && booking.wagonNumber === wagonNumber
       );
       
@@ -42,24 +52,23 @@ export const BookingProvider = ({ children }) => {
       
       const booked = trainBookings.flatMap(booking => booking.seats);
       
-      const localBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-      const localTrainBookings = localBookings.filter(
-        booking => booking.trainId === trainId && booking.wagonNumber === wagonNumber
-      );
-      const localBookedSeats = localTrainBookings.flatMap(booking => booking.seats);
-      
-      const allBookedSeats = [...new Set([...booked, ...localBookedSeats])];
-      
-      console.log('Booked seats:', allBookedSeats);
-      setBookedSeats(allBookedSeats);
+      try {
+        const response = await bookingsApi.getByTrain(trainId);
+        const serverBookings = response.data.filter(
+          booking => booking.wagonNumber === wagonNumber
+        );
+        const serverBookedSeats = serverBookings.flatMap(booking => booking.seats);
+        
+        const allBookedSeats = [...new Set([...booked, ...serverBookedSeats])];
+        console.log('Booked seats (combined):', allBookedSeats);
+        setBookedSeats(allBookedSeats);
+      } catch (error) {
+        console.log('Using only localStorage for bookings');
+        setBookedSeats(booked);
+      }
     } catch (error) {
       console.error('Error loading booked seats:', error);
-      const localBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-      const localTrainBookings = localBookings.filter(
-        booking => booking.trainId === trainId && booking.wagonNumber === wagonNumber
-      );
-      const localBookedSeats = localTrainBookings.flatMap(booking => booking.seats);
-      setBookedSeats(localBookedSeats);
+      setBookedSeats([]);
     }
   };
 
@@ -115,11 +124,17 @@ export const BookingProvider = ({ children }) => {
     };
 
     try {
-      await bookingsApi.create(booking);
-      
       const savedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
       savedBookings.push(booking);
       localStorage.setItem('bookings', JSON.stringify(savedBookings));
+      console.log('Booking saved to localStorage:', booking);
+      
+      try {
+        await bookingsApi.create(booking);
+        console.log('Booking also saved to json-server');
+      } catch (error) {
+        console.log('json-server not available, saved only to localStorage');
+      }
       
       await loadBookedSeats(selectedTrain.id, selectedWagon.number);
       
